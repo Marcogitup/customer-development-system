@@ -1,0 +1,3 @@
+company_name,website,country,address,phone,email,status,source_type,source_title,source_url,event
+BrightView Display Systems,https://brightview.example,United States,"100 Market Street, Chicago, IL",+1 312 555 0100,sales@brightview.example,new,trade_show,Digital Signage Expo 2026 Exhibitor Directory,https://example.com/digital-signage-expo/exhibitors,Digital Signage Expo 2026
+RetailTech Integrators,https://retailtech.example,Canada,"88 King Street, Toronto",+1 416 555 0199,info@retailtech.example,reviewing,magazine_directory,International Retail Signage Buyer Guide,https://example.com/guides/retail-signage,

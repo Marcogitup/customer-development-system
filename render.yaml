@@ -72,8 +72,8 @@ services:
     buildCommand: npm install && npm run build
     startCommand: npm run start -- --port $PORT
     envVars:
-      - key: API_HOSTPORT
+      - key: NEXT_PUBLIC_API_BASE_URL
         fromService:
           type: web
           name: customer-dev-api
-          property: hostport
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
