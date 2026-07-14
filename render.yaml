@@ -1,0 +1,79 @@
+databases:
+  - name: customer-dev-db
+    databaseName: customer_dev
+    user: customer_dev
+    plan: free
+
+services:
+  - type: keyvalue
+    name: customer-dev-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: customer-dev-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: customer-dev-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: customer-dev-redis
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: SEARCH_PROVIDER
+        value: demo
+      - key: CRAWL_USER_AGENT
+        value: CustomerDevelopmentBot/0.1 (+contact@example.com)
+      - key: FRONTEND_ORIGIN
+        fromService:
+          type: web
+          name: customer-dev-web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+
+  - type: worker
+    name: customer-dev-worker
+    runtime: python
+    rootDir: backend
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.worker
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: customer-dev-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: customer-dev-redis
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: SEARCH_PROVIDER
+        value: demo
+      - key: CRAWL_USER_AGENT
+        value: CustomerDevelopmentBot/0.1 (+contact@example.com)
+
+  - type: web
+    name: customer-dev-web
+    runtime: node
+    rootDir: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start -- --port $PORT
+    envVars:
+      - key: API_HOSTPORT
+        fromService:
+          type: web
+          name: customer-dev-api
+          property: hostport
