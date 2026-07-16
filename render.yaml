@@ -29,6 +29,8 @@ services:
           property: connectionString
       - key: ENVIRONMENT
         value: production
+      - key: PYTHON_VERSION
+        value: 3.11.11
       - key: SEARCH_PROVIDER
         value: demo
       - key: CRAWL_USER_AGENT
