@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from app.core.config import get_settings
+
 
 @dataclass(frozen=True)
 class SearchResult:
@@ -52,5 +54,68 @@ class DemoSearchProvider(SearchProvider):
         return results[:limit]
 
 
+class OpenAIWebSearchProvider(SearchProvider):
+    def search(self, query: str, limit: int = 10) -> list[SearchResult]:
+        settings = get_settings()
+        if not settings.openai_api_key:
+            return DemoSearchProvider().search(query, limit)
+
+        from openai import OpenAI
+
+        client = OpenAI(api_key=settings.openai_api_key)
+        response = client.responses.create(
+            model=settings.openai_model,
+            tools=[{"type": "web_search"}],
+            input=(
+                "Search the public web for B2B customer development sources. "
+                "Return only concise JSON with an array named results. Each item must have "
+                "title, url, and snippet. Do not invent URLs. Query: "
+                f"{query}"
+            ),
+            text={
+                "format": {
+                    "type": "json_schema",
+                    "name": "search_results",
+                    "schema": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "properties": {
+                            "results": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": False,
+                                    "properties": {
+                                        "title": {"type": "string"},
+                                        "url": {"type": "string"},
+                                        "snippet": {"type": "string"},
+                                    },
+                                    "required": ["title", "url", "snippet"],
+                                },
+                            }
+                        },
+                        "required": ["results"],
+                    },
+                }
+            },
+        )
+
+        import json
+
+        payload = json.loads(response.output_text)
+        results = payload.get("results", [])
+        return [
+            SearchResult(
+                title=item.get("title", "")[:500],
+                url=item.get("url", ""),
+                snippet=item.get("snippet", "")[:1000],
+            )
+            for item in results
+            if item.get("url")
+        ][:limit]
+
+
 def get_search_provider(name: str) -> SearchProvider:
+    if name == "openai":
+        return OpenAIWebSearchProvider()
     return DemoSearchProvider()
