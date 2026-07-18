@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     crawl_timeout_seconds: float = 12.0
     crawl_min_domain_delay_seconds: float = 1.0
     search_provider: str = "demo"
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-5.6-terra"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
