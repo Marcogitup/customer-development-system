@@ -32,11 +32,42 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.11
       - key: SEARCH_PROVIDER
-        value: demo
+        value: openai
+      - key: OPENAI_MODEL
+        value: gpt-5.6-terra
+      - key: OPENAI_API_KEY
+        sync: false
       - key: CRAWL_USER_AGENT
         value: CustomerDevelopmentBot/0.1 (+contact@example.com)
       - key: FRONTEND_ORIGIN
-        value: https://customer-dev-web.onrender.com
+        fromService:
+          type: web
+          name: customer-dev-web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+
+  - type: worker
+    name: customer-dev-worker
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.worker
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: customer-dev-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: customer-dev-redis
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: SEARCH_PROVIDER
+        value: demo
+      - key: CRAWL_USER_AGENT
+        value: CustomerDevelopmentBot/0.1 (+contact@example.com)
 
   - type: web
     name: customer-dev-web
@@ -47,4 +78,7 @@ services:
     startCommand: npm run start -- --port $PORT
     envVars:
       - key: NEXT_PUBLIC_API_BASE_URL
-        value: https://customer-dev-api.onrender.com
+        fromService:
+          type: web
+          name: customer-dev-api
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
