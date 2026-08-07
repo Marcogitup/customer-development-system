@@ -20,13 +20,13 @@ The crawler layer is designed to respect `robots.txt`, limit requests per domain
 - Frontend: Next.js, React, TypeScript
 - Backend: FastAPI, SQLAlchemy, Alembic
 - Database: PostgreSQL
-- Queue: Redis + RQ worker
-- Deployment: Render Blueprint
+- Task mode: synchronous research runs from the API service
+- Deployment: Render Blueprint on free web services
 
 ## Repository Structure
 
 ```text
-backend/      FastAPI API, models, migrations, worker
+backend/      FastAPI API, models, migrations
 frontend/     Next.js dashboard
 docs/         PRD and technical design
 sample_data/  Example inputs and company rows
@@ -42,7 +42,7 @@ cp .env.example backend/.env
 cp .env.example frontend/.env.local
 ```
 
-2. Start PostgreSQL and Redis locally.
+2. Start PostgreSQL locally.
 
 3. Run the backend:
 
@@ -56,15 +56,7 @@ python -m app.seed
 uvicorn app.main:app --reload
 ```
 
-4. Run the worker:
-
-```bash
-cd backend
-source .venv/bin/activate
-python -m app.worker
-```
-
-5. Run the frontend:
+4. Run the frontend:
 
 ```bash
 cd frontend
@@ -74,7 +66,7 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-For local testing without Redis worker, use the UI's `Run now` button. Production should use `Queue`.
+Use the UI's `Run now` button to run research from the API service. This free-tier setup does not create a paid background worker.
 
 ## Render Deployment
 
@@ -83,9 +75,7 @@ For local testing without Redis worker, use the UI's `Run now` button. Productio
 3. Connect the GitHub repository.
 4. Render reads `render.yaml` and creates:
    - PostgreSQL database
-   - Redis instance
    - FastAPI API service
-   - RQ worker service
    - Next.js frontend service
 5. Update these values after creation:
    - `CRAWL_USER_AGENT` with a real contact email

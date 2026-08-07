@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Edit3, Play, Plus, RefreshCw, Save, Search } from "lucide-react";
-import { createProject, exportUrl, getProject, listProjects, queueResearch, runResearchNow, updateCompany } from "./api";
+import { Download, Edit3, Plus, RefreshCw, Save, Search } from "lucide-react";
+import { createProject, exportUrl, getProject, listProjects, runResearchNow, updateCompany } from "./api";
 import type { Company, Project, ProjectDetail } from "./types";
 
 const statuses = ["new", "reviewing", "qualified", "contacted", "not_fit", "blocked_source"];
@@ -56,15 +56,11 @@ export default function Home() {
     }
   }
 
-  async function startResearch(mode: "queue" | "now") {
+  async function startResearch() {
     if (!activeId) return;
     setBusy(true);
     try {
-      if (mode === "queue") {
-        await queueResearch(activeId);
-      } else {
-        await runResearchNow(activeId);
-      }
+      await runResearchNow(activeId);
       setDetail(await getProject(activeId));
     } finally {
       setBusy(false);
@@ -140,10 +136,7 @@ export default function Home() {
           </div>
           {detail && (
             <div className="actions">
-              <button disabled={busy} onClick={() => startResearch("queue")} title="Run with background worker">
-                <Play size={16} /> Queue
-              </button>
-              <button disabled={busy} onClick={() => startResearch("now")} title="Run immediately for local testing">
+              <button disabled={busy} onClick={startResearch} title="Run immediately">
                 <RefreshCw size={16} /> Run now
               </button>
               <a href={exportUrl(detail.id, "csv")}>

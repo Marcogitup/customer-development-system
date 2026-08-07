@@ -7,7 +7,5 @@ openai==1.97.0
 psycopg[binary]==3.2.10
 pydantic-settings==2.3.4
 python-dotenv==1.0.1
-redis==5.0.7
-rq==1.16.2
 SQLAlchemy==2.0.31
 uvicorn[standard]==0.30.3

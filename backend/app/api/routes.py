@@ -4,12 +4,9 @@ from io import BytesIO, StringIO
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from openpyxl import Workbook
-from redis import Redis
-from rq import Queue
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, selectinload
 
-from app.core.config import get_settings
 from app.core.database import get_db
 from app.models.company import Company
 from app.models.keyword import Keyword
@@ -95,12 +92,7 @@ def create_research_task(project_id: int, db: Session = Depends(get_db)) -> Rese
     db.add(task)
     db.commit()
     db.refresh(task)
-
-    settings = get_settings()
-    queue = Queue("research", connection=Redis.from_url(settings.redis_url))
-    job = queue.enqueue(run_research_task, task.id, job_timeout=900)
-    task.queue_job_id = job.id
-    db.commit()
+    run_research_task(task.id)
     db.refresh(task)
     return task
 

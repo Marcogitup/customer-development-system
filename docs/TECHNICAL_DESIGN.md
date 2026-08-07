@@ -7,11 +7,8 @@ flowchart LR
   U["User"] --> FE["Next.js Frontend"]
   FE --> API["FastAPI API"]
   API --> DB[("PostgreSQL")]
-  API --> Redis[("Redis")]
-  Worker["RQ Worker"] --> Redis
-  Worker --> DB
-  Worker --> Search["Search Provider"]
-  Worker --> Crawl["Compliant Crawler"]
+  API --> Search["Search Provider"]
+  API --> Crawl["Compliant Crawler"]
   Crawl --> Web["Public Web Sources"]
 ```
 
@@ -20,9 +17,9 @@ flowchart LR
 - Frontend: Next.js App Router, React, TypeScript, plain CSS modules/global CSS.
 - Backend: FastAPI, SQLAlchemy 2, Pydantic, Alembic.
 - Database: PostgreSQL.
-- Queue: Redis + RQ.
+- Task mode: synchronous research runs from the API service.
 - Export: CSV via standard library, XLSX via `openpyxl`.
-- Deployment: Render Blueprint with web services, worker, Redis, and PostgreSQL.
+- Deployment: Render Blueprint with free web services and PostgreSQL.
 
 ## Backend Modules
 
@@ -37,7 +34,6 @@ flowchart LR
 - `app.services.search_provider`: deterministic demo provider plus provider interface.
 - `app.services.crawler`: robots-aware fetch helpers.
 - `app.services.dedup`: company deduplication.
-- `app.worker`: RQ worker entrypoint.
 
 ## Data Model
 
@@ -115,10 +111,8 @@ Future versions can add fuzzy matching and review queues.
 Render services:
 
 - `lead-research-api`: FastAPI web service.
-- `lead-research-worker`: background worker.
 - `lead-research-web`: Next.js web service.
 - Managed PostgreSQL.
-- Managed Redis.
 
 GitHub Actions:
 

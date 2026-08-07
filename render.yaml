@@ -5,11 +5,6 @@ databases:
     plan: free
 
 services:
-  - type: keyvalue
-    name: customer-dev-redis
-    plan: free
-    ipAllowList: []
-
   - type: web
     name: customer-dev-api
     runtime: python
@@ -22,11 +17,6 @@ services:
         fromDatabase:
           name: customer-dev-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: customer-dev-redis
-          property: connectionString
       - key: ENVIRONMENT
         value: production
       - key: PYTHON_VERSION
@@ -34,7 +24,7 @@ services:
       - key: SEARCH_PROVIDER
         value: openai
       - key: OPENAI_MODEL
-        value: gpt-5.1
+        value: gpt-5
       - key: OPENAI_API_KEY
         sync: false
       - key: CRAWL_USER_AGENT
@@ -44,30 +34,6 @@ services:
           type: web
           name: customer-dev-web
           envVarKey: RENDER_EXTERNAL_HOSTNAME
-
-  - type: worker
-    name: customer-dev-worker
-    runtime: python
-    rootDir: backend
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -m app.worker
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: customer-dev-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: customer-dev-redis
-          property: connectionString
-      - key: ENVIRONMENT
-        value: production
-      - key: SEARCH_PROVIDER
-        value: demo
-      - key: CRAWL_USER_AGENT
-        value: CustomerDevelopmentBot/0.1 (+contact@example.com)
 
   - type: web
     name: customer-dev-web

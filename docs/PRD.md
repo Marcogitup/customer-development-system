@@ -25,7 +25,7 @@ The system helps users:
    - Product term: `LED display`
    - Industry term: `retail signage`
    - Customer identity term: `commercial integrator`
-3. System creates an async research task.
+3. System creates a research task.
 4. Task expands keywords from configured sources:
    - Search result titles and snippets
    - Public customer website product/category pages
@@ -122,9 +122,9 @@ The system must support:
 - Source traceability for every company.
 - CSV and XLSX export.
 
-### 4.6 Async Task Management
+### 4.6 Task Management
 
-- Research runs as background jobs.
+- Research runs from the API service in the free-tier deployment.
 - Tasks expose status:
   - `queued`
   - `running`
@@ -151,7 +151,6 @@ The system must support:
   - Next.js frontend
   - FastAPI backend
   - PostgreSQL database
-  - Redis-backed worker using RQ
 - Environment variables documented in `.env.example`.
 - Database migrations managed by Alembic.
 - GitHub Actions run lint/build checks.
@@ -162,7 +161,7 @@ The system must support:
 The generated repository implements a functional MVP with:
 
 - API CRUD for projects, keywords, companies, sources, and tasks.
-- Background research task scaffold with compliant crawler services.
+- Research task scaffold with compliant crawler services.
 - Deterministic demo search provider for local development.
 - Optional real search provider interface for production integration.
 - Frontend dashboard for project creation, task launch, review, editing, filtering, and export.

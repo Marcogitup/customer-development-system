@@ -8,14 +8,13 @@ class Settings(BaseSettings):
     app_name: str = "Customer Development System"
     environment: str = "development"
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/customer_dev"
-    redis_url: str = "redis://localhost:6379/0"
     frontend_origin: str = "http://localhost:3000"
     crawl_user_agent: str = "CustomerDevelopmentBot/0.1 (+contact@example.com)"
     crawl_timeout_seconds: float = 12.0
     crawl_min_domain_delay_seconds: float = 1.0
     search_provider: str = "demo"
     openai_api_key: str | None = None
-    openai_model: str = "gpt-5.6-terra"
+    openai_model: str = "gpt-5"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

@@ -35,10 +35,6 @@ export function runResearchNow(id: number) {
   return request<ResearchTask>(`/api/projects/${id}/research-tasks/run-now`, { method: "POST" });
 }
 
-export function queueResearch(id: number) {
-  return request<ResearchTask>(`/api/projects/${id}/research-tasks`, { method: "POST" });
-}
-
 export function updateCompany(id: number, payload: Partial<Company>) {
   return request<Company>(`/api/companies/${id}`, { method: "PATCH", body: JSON.stringify(payload) });
 }
